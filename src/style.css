@@ -29,6 +29,8 @@ text-decoration: none;
 ul{
     padding-left: 0;
     list-style: none;
+    display: flex;
+    justify-content: space-between;
 }
 
 ul > li{
@@ -39,10 +41,18 @@ ul > li{
     text-align: center;
 }
 
+.card-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .card{
+    padding: 10px;
       border: solid 1px #999;
       border-radius: 8px;
-      width: 250px; 
+      flex-basis: 250px; 
 }
 
 input[type="text"]{
