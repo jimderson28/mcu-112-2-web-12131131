@@ -53,8 +53,12 @@ new Product({
 
 router = inject(Router);
 
+onEdit(product: Product): void {
+  this.router.navigate(['product', 'form', product.id]);
+}
+
 onView(product:Product): void{
-  this.router.navigate(['product', product.id]);
+  this.router.navigate(['product', 'view', product.id]);
 }
 
 }
