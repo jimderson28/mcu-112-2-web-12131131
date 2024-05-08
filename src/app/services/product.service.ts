@@ -55,4 +55,9 @@ const id = this._data.length === 0 ? 1 : Math.max(...this._data.map(({id}) => id
 
   this._data.push(new Product({...product, id }));
 }
+
+remove(productId: number ):void{
+  const index = this._data.findIndex(({ id }) => productId === id);
+  this._data.splice(index, 1);
+}
 }
