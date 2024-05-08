@@ -29,6 +29,11 @@ onEdit(): void {
   this.router.navigate(['product', 'form', this.product.id]);
 }
 
+onRemove():void{
+  this.ProductService.remove(this.product.id);
+  this.router.navigate(['products']);
+}
+
 onBack():void{
   this.router.navigate(['products']);
 }
