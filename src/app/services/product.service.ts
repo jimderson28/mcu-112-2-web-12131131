@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../model/product';
+import { Observable, delay, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -46,8 +47,8 @@ export class ProductService {
   }),
   ];
 
-getList(): Product[]{
-    return this._data;
+getList(): Observable <Product[]>{
+    return of(this._data).pipe(delay(2000));
 }
 
 getById(productId: number): Product{
