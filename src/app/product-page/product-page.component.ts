@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Product } from '../model/product';
 import { ProductCardListComponent } from '../product-card-list/product-card-list.component';
 import { Router } from '@angular/router';
-import { Subscriber } from 'rxjs';
+import { Subject, Subscriber, startWith, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-product-page',
@@ -19,9 +19,12 @@ export class ProductPageComponent implements OnInit {
 
 products!: Product[];
 
+private readonly refresh$ = new Subject<void>();
+
   ngOnInit(): void {
- this.ProductService.getList().subscribe((products) => (this.products = products));
-;
+this.refresh$.pipe(
+  startWith(undefined),
+  switchMap(() => this.ProductService.getList())).subscribe((products) => (this.products = products));
 }
 
 onAdd(): void{
@@ -34,7 +37,7 @@ onAdd(): void{
     createDate: new Date(),
     price: 10000,
   });
-  this.ProductService.add(product).subscribe();
+  this.ProductService.add(product).subscribe(() =>this.refresh$.next());
 }
 
 onEdit(product: Product): void {
@@ -42,7 +45,7 @@ onEdit(product: Product): void {
 }
 
 onRemove({ id }: Product): void{
-  this.ProductService.remove(id).subscribe();
+  this.ProductService.remove(id).subscribe(() =>this.refresh$.next());
 }
 
 onView(product:Product): void{
