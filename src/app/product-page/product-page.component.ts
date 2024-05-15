@@ -4,28 +4,27 @@ import { Product } from '../model/product';
 import { ProductCardListComponent } from '../product-card-list/product-card-list.component';
 import { Router } from '@angular/router';
 import { Subject, Subscriber, startWith, switchMap } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-product-page',
   standalone: true,
-  imports: [ProductCardListComponent],
+  imports: [AsyncPipe, ProductCardListComponent],
   templateUrl: './product-page.component.html',
   styleUrl: './product-page.component.css'
 })
-export class ProductPageComponent implements OnInit {
+export class ProductPageComponent  {
   router = inject(Router) ;
 
   private ProductService = inject(ProductService);
 
-products!: Product[];
+  private readonly refresh$ = new Subject<void>();
 
-private readonly refresh$ = new Subject<void>();
-
-  ngOnInit(): void {
+ readonly  products$ =
 this.refresh$.pipe(
   startWith(undefined),
-  switchMap(() => this.ProductService.getList())).subscribe((products) => (this.products = products));
-}
+  switchMap(() => this.ProductService.getList()));
+
 
 onAdd(): void{
   const product = new Product({
@@ -37,7 +36,7 @@ onAdd(): void{
     createDate: new Date(),
     price: 10000,
   });
-  this.ProductService.add(product).subscribe(() =>this.refresh$.next());
+  this.ProductService.add(product).subscribe(() => this.refresh$.next());
 }
 
 onEdit(product: Product): void {
