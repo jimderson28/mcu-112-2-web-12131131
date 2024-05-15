@@ -22,7 +22,7 @@ private router = inject(Router);
 private ProductService = inject(ProductService);
 
 ngOnInit(): void {
-  this.product = this.ProductService.getById(this.id);
+this.ProductService.getById(this.id).subscribe((product) => (this.product = product));
 }
 
 onEdit(): void {
