@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Product } from '../model/product';
 import { ProductCardListComponent } from '../product-card-list/product-card-list.component';
 import { Router } from '@angular/router';
+import { Subscriber } from 'rxjs';
 
 @Component({
   selector: 'app-product-page',
@@ -33,7 +34,7 @@ onAdd(): void{
     createDate: new Date(),
     price: 10000,
   });
-  this.ProductService.add(product);
+  this.ProductService.add(product).subscribe();
 }
 
 onEdit(product: Product): void {
@@ -41,7 +42,7 @@ onEdit(product: Product): void {
 }
 
 onRemove({ id }: Product): void{
-  this.ProductService.remove(id)
+  this.ProductService.remove(id).subscribe();
 }
 
 onView(product:Product): void{
