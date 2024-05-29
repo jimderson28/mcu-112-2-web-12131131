@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Product } from '../model/product';
 import { ProductCardListComponent } from '../product-card-list/product-card-list.component';
 import { Router } from '@angular/router';
-import { Subject, Subscriber, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, Subject, Subscriber, combineLatest, startWith, switchMap, tap } from 'rxjs';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -23,18 +23,48 @@ export class ProductPageComponent  {
 
   private readonly refresh$ = new Subject<void>();
 
-  protected readonly formControl = new FormControl<string | undefined>(undefined);
+  protected readonly formControl = new FormControl<string | undefined>(undefined, { nonNullable: true });
 
-  pageIndex = 1;
+  private readonly condition$ = new BehaviorSubject<string | undefined>(undefined);
+  get condition() {
+    return this.condition$.value;
+  }
+  set condition(value: string | undefined) {
+    this.condition$.next(value);
+  }
 
- readonly  products$ =this.refresh$.pipe(
-  startWith(undefined),
-  switchMap(() => this.productService.getList(undefined,1,5)));
+  private readonly pageIndex$ = new BehaviorSubject<number>(1);
+  get pageIndex() {
+    return this.pageIndex$.value;
+  }
+  set pageIndex(value: number) {
+    this.pageIndex$.next(value);
+  }
 
-  readonly totalCount$ = this.refresh$.pipe(
+ readonly  products$ =combineLatest([
+  this.refresh$.pipe(
     startWith(undefined),
-    switchMap(() => this.productService.getCount())
-  )
+    tap(( condition ) => console.log('refresh',condition))
+  ),
+  this.condition$.pipe(tap((condition) => console.log('condition', condition))),
+  this.pageIndex$.pipe(tap((index) => console.log('pageIndex', index))),
+]).pipe(
+  tap((data) => console.log(data)),
+    switchMap(([_, condition, pageIndex]) => this.productService.getList(condition, pageIndex, this.pageSize)),
+    tap((data) => console.log(data))
+  );
+
+  readonly totalCount$ =
+  combineLatest([
+  this.refresh$.pipe(startWith(undefined)),this.condition$
+]).pipe(
+    switchMap(([_, condition]) => this.productService.getCount(condition))
+);
+
+onPageIndexChange(index: number): void {
+  console.log(index);
+  this.pageIndex = index;
+}
 
 onAdd(): void{
   const product = new Product({
