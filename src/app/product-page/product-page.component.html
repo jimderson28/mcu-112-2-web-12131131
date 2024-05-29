@@ -6,6 +6,9 @@
     </span>
 </div>
 <app-product-card-list [products]="(products$ | async)|| []"
+[pageSize]="pageSize"
+[totalCount]="(totalCount$ | async) || 0"
+[(pageIndex)]="pageIndex"
 (edit)="onEdit($event)"
 (remove)="onRemove($event)"
 (view)="onView($event)"

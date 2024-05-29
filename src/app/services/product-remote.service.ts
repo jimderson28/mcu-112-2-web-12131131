@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ProductService } from './product.service';
-import { Observable, of } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { Product } from '../model/product';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
@@ -22,6 +22,11 @@ override getById(productId: number): Observable<Product> {
     const params = new HttpParams({ fromObject: query });
     return this.httpClient.get<Product[]>(this.url,{ params });
 
+  }
+
+  override getCount(name?: string): Observable<number> {
+    const option = name ? { params: new HttpParams().set('name', name) } : {};
+    return this.httpClient.get<Product[]>(this.url, option).pipe(map((data) => data.length));
   }
 
   override add(product: Product): Observable<Product> {

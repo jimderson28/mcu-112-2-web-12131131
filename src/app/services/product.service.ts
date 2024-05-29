@@ -47,14 +47,18 @@ export class ProductService {
   }),
   ];
 
-getList(name: String | undefined, pageIndex: number,pageSize: number): Observable <Product[]>{
-    return of(this._data);
-}
+   getById(productId: number): Observable<Product>{
+    const product = this._data.find(({ id }) => id === productId)!;
+    return of(product);
+  }
 
-getById(productId: number): Observable<Product>{
-  const product = this._data.find(({ id }) => id === productId)!;
-  return of(product);
-}
+  getList(name: String | undefined, pageIndex: number,pageSize: number): Observable <Product[]>{
+      return of(this._data);
+  }
+
+  getCount(name?: string): Observable<number> {
+    throw new Error('NO');
+  }
 
 add(product: Product): Observable<Product>{
 const id = this._data.length === 0 ? 1 : Math.max(...this._data.map(({id}) => id)) +1;

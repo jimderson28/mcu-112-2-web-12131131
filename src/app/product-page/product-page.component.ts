@@ -17,17 +17,24 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 export class ProductPageComponent  {
   router = inject(Router) ;
 
-  private ProductService = inject(ProductService);
+  private productService = inject(ProductService);
+
+  protected pageSize = 5;
 
   private readonly refresh$ = new Subject<void>();
 
   protected readonly formControl = new FormControl<string | undefined>(undefined);
 
- readonly  products$ =
-this.refresh$.pipe(
-  startWith(undefined),
-  switchMap(() => this.ProductService.getList(undefined,1,5)));
+  pageIndex = 1;
 
+ readonly  products$ =this.refresh$.pipe(
+  startWith(undefined),
+  switchMap(() => this.productService.getList(undefined,1,5)));
+
+  readonly totalCount$ = this.refresh$.pipe(
+    startWith(undefined),
+    switchMap(() => this.productService.getCount())
+  )
 
 onAdd(): void{
   const product = new Product({
@@ -39,7 +46,7 @@ onAdd(): void{
     createDate: new Date(),
     price: 10000,
   });
-  this.ProductService.add(product).subscribe(() => this.refresh$.next());
+  this.productService.add(product).subscribe(() => this.refresh$.next());
 }
 
 onEdit(product: Product): void {
@@ -47,7 +54,7 @@ onEdit(product: Product): void {
 }
 
 onRemove({ id }: Product): void{
-  this.ProductService.remove(id).subscribe(() =>this.refresh$.next());
+  this.productService.remove(id).subscribe(() =>this.refresh$.next());
 }
 
 onView(product:Product): void{
