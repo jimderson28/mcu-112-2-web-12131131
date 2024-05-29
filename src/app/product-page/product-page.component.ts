@@ -4,12 +4,13 @@ import { Product } from '../model/product';
 import { ProductCardListComponent } from '../product-card-list/product-card-list.component';
 import { Router } from '@angular/router';
 import { Subject, Subscriber, startWith, switchMap } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-product-page',
   standalone: true,
-  imports: [AsyncPipe, ProductCardListComponent],
+  imports: [AsyncPipe, JsonPipe ,ReactiveFormsModule ,ProductCardListComponent],
   templateUrl: './product-page.component.html',
   styleUrl: './product-page.component.css'
 })
@@ -20,10 +21,12 @@ export class ProductPageComponent  {
 
   private readonly refresh$ = new Subject<void>();
 
+  protected readonly formControl = new FormControl<string | undefined>(undefined);
+
  readonly  products$ =
 this.refresh$.pipe(
   startWith(undefined),
-  switchMap(() => this.ProductService.getList('書籍B',1,5)));
+  switchMap(() => this.ProductService.getList(undefined,1,5)));
 
 
 onAdd(): void{
