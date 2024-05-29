@@ -47,7 +47,7 @@ export class ProductService {
   }),
   ];
 
-getList(): Observable <Product[]>{
+getList(name: String | undefined, pageIndex: number,pageSize: number): Observable <Product[]>{
     return of(this._data);
 }
 

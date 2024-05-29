@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { ProductService } from './product.service';
 import { Observable, of } from 'rxjs';
 import { Product } from '../model/product';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,11 @@ override getById(productId: number): Observable<Product> {
   return this.httpClient.get<Product>(`${this.url}/${productId}`);
 }
 
-  override getList(): Observable<Product[]> {
-    return this.httpClient.get<Product[]>(this.url);
+  override getList(name: string | undefined, pageIndex: number,pageSize: number): Observable<Product[]> {
+    const query: { [key: string]: string | number } = { _page: pageIndex, _limit: pageSize };
+    if (name) query['name'] = name;
+    const params = new HttpParams({ fromObject: query });
+    return this.httpClient.get<Product[]>(this.url,{ params });
 
   }
 
