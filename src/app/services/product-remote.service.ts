@@ -33,6 +33,10 @@ override getById(productId: number): Observable<Product> {
     return this.httpClient.post<Product>(this.url, { ...product });
   }
 
+  override update(product: Product): Observable<Product> {
+    return this.httpClient.put<Product>(`${this.url}/${product.id}`, product);
+  }
+
   override remove(productId: number): Observable<Product> {
     return this.httpClient.delete<Product>(`${this.url}/${productId}`);
   }
