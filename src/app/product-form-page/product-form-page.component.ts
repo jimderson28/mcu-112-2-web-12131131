@@ -4,7 +4,7 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { map } from 'rxjs';
 import { Product } from '../model/product';
 import { IProductForm } from '../interface/product-form.interface';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-product-form-page',
@@ -18,16 +18,30 @@ private readonly routes = inject(ActivatedRoute);
 
 form = new FormGroup<IProductForm>({
   id: new FormControl<number | null>(null),
-  name: new FormControl<string | null>(null),
+  name: new FormControl<string | null>(null,{ validators: [Validators.required]} ),
   authors: new FormArray<FormControl<string | null>>([]),
-  company: new FormControl<string | null>(null),
+  company: new FormControl<string | null>(null, { validators: [Validators.required]}),
   isShow: new FormControl<boolean>(false, { nonNullable: true }),
-  price: new FormControl<string | null>(null),
+  price: new FormControl<string | null>(null, { validators: [Validators.required,  Validators.pattern('^[0-9]$')]}),
 });
+
+get name(): FormControl<string | null> {
+  return this.form.get('name') as FormControl<string | null>;
+}
+
 
 get authors(): FormArray<FormControl<string | null>> {
   return this.form.get('authors') as FormArray<FormControl<string | null>>;
 }
+
+get company(): FormControl<string | null> {
+  return this.form.get('company') as FormControl<string | null>;
+}
+
+get price(): FormControl<string | null> {
+  return this.form.get('price') as FormControl<string | null>;
+}
+
 
 product!: Product;
 
@@ -38,7 +52,7 @@ product!: Product;
   }
 
   onAddAuthors(): void {
-    const formControl = new FormControl<string | null>(null);
+    const formControl = new FormControl<string | null>(null, { validators: [Validators.required] });
     this.authors.push(formControl);
   }
 }
